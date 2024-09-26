@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palpite Brasileirão Série A</title>
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+
+    <table class="header-table">
+        <tr>
+            <td>
+                <h1>PALPITE BRASILEIRÃO SÉRIE A</h1>
+            </td>
+        </tr>
+    </table>
+    <div class="container">
+        
+        <div class="table-container" id="table1"></div>
+        <div class="table-container" id="table2"></div>
+        <div class="table-container" id="ranking"></div>
+	<div class="table-container" id="lideres"></div>
+
+    </div>
+</body>
+</html>
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlClassificacao = 'https://gauchazh.clicrbs.com.br/esportes/tabelas/brasileirao';
+            const urlPontosJogos = 'https://gauchazh.clicrbs.com.br/esportes/tabelas/brasileirao'; // Pode ser a mesma URL ou outra se necessário
+            const imagePath = 'imgs/';
+
+
+const url = 'https://raw.githubusercontent.com/rosate2007/palpiteseriea/refs/heads/main/dados.json'; // Link para o arquivo JSON
+const token = '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'; // Substitua pelo seu token de acesso pessoal
+
+fetch(url, {
+    method: 'GET',
+    headers: {
+        'Authorization': `token ${token}`, // Usando o token na autorização
+        'Accept': 'application/vnd.github.v3.raw' // Aceitar resposta em formato raw
+    }
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return response.json();
+})
+.then(data => {
+    console.log(data); // Aqui você pode trabalhar com os dados JSON
+})
+.catch(error => {
+    console.error('There has been a problem with your fetch operation:', error);
+});
+
+
+
+
+            // Função para buscar e processar dados de classificação
+            function fetchClassificacaoData() {
+                return fetch(urlClassificacao)
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const table = doc.querySelector('table');
+                        const data = [];
+                        const originalData = [];
+
+                        if (table) {
+                            const rows = table.querySelectorAll('tr');
+                            let isFirstRow = true;
+                            rows.forEach(row => {
+                                if (isFirstRow) {
+                                    isFirstRow = false;
+                                    return;
+                                }
+
+                                const rowData = [];
+                                const originalRowData = [];
+                                const cells = row.querySelectorAll('td, th');
+                                cells.forEach(cell => {
+                                    let text = cell.innerText.trim();
+                                    originalRowData.push(text);
+                                    if (text.length > 3) {
+                                        text = text.slice(0, -3);
+                                    }
+                                    rowData.push(text);
+                                });
+                                if (rowData.length > 0) {
+                                    data.push(rowData);
+                                    originalData.push(originalRowData);
+                                }
+                            });
+
+                            return { data, originalData };
+                        }
+                        throw new Error('Tabela de classificação não encontrada');
+                    });
+            }
+
+            // Função para buscar e processar dados de pontos e jogos
+            function fetchPontosJogosData() {
+                return fetch(urlPontosJogos)
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const rows = doc.querySelectorAll('table tr');
+                        const pontosJogosData = [];
+
+                        rows.forEach(row => {
+                            const cells = row.querySelectorAll('td');
+                            if (cells.length > 2) { // Verifica se há pelo menos 3 colunas
+                                const pontos = cells[0].textContent.trim();
+                                const jogos = cells[1].textContent.trim();
+                                pontosJogosData.push({ pontos, jogos });
+                            }
+                        });
+
+                        return pontosJogosData;
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar Pontos e Jogos:', error);
+                        return [];
+                    });
+            }
+
+            // Função para formatar os dados da Tabela 1
+            function formatTable1Data(data) {
+                return data.map(item => item.slice(4).trim());
+            }
+
+            function formatAdditionalData(data) {
+                return data.map(item => item.slice(4).trim());
+            }
+
+            function formatTable1EndData(data) {
+                return data.slice(16).map(item => item.slice(4).trim());
+            }
+
+            const additionalHeaders = ['Chavez', 'Claudemir', 'Pauloca', 'Rodrigo'];
+            const additionalData = [
+                ['1.  Palmeiras', '1.  Palmeiras', '1.  Flamengo', '1.  Flamengo'],
+                ['2.  Flamengo', '2.  Botafogo', '2.  Palmeiras', '2.  Palmeiras'],
+                ['3.  Botafogo', '3.  Flamengo', '3.  Botafogo', '3.  Athletico-PR'],
+                ['4.  Bahia', '4.  Bahia', '4.  Inter', '4.  Atlético-MG'],
+                ['17.  Fluminense', '17.  Corinthians', '17.  Vasco', '17.  Vitória'],
+                ['18.  Grêmio', '18.  Vitória', '18.  Atlético-GO', '18.  Atlético-GO'],
+                ['19.  Vasco', '19.  Grêmio', '19.  Fluminense', '19.  Criciúma'],
+                ['20.  Criciúma', '20.  Fluminense', '20.  Vitória', '20.  Juventude']
+            ];
+
+            function createAdditionalTable(data) {
+                const additionalTable = document.createElement('table');
+                const additionalTbody = document.createElement('tbody');
+                
+                const additionalThead = document.createElement('thead');
+                const additionalHeaderRow = document.createElement('tr');
+
+                const headerContents = [
+                    ['Chavez', 'Claudemir'], 
+                    ['Pauloca', 'Rodrigo']
+                ];
+
+                headerContents.forEach((contents, index) => {
+                    const th = document.createElement('th');
+                    th.colSpan = 2;
+                    th.textContent = contents[0];
+                    if (index === 0) {
+                        th.style.borderRight = 'none';
+                    }
+                    additionalHeaderRow.appendChild(th);
+                    
+                    const th2 = document.createElement('th');
+                    th2.colSpan = 2;
+                    th2.textContent = contents[1];
+                    additionalHeaderRow.appendChild(th2);
+                });
+
+                additionalThead.appendChild(additionalHeaderRow);
+                additionalTable.appendChild(additionalThead);
+                
+                const formattedData1 = formatTable1Data(data.map(row => row[0].trim()));
+                const formattedEndData1 = formatTable1EndData(data.map(row => row[0].trim()));
+                const formattedAdditionalData = formatAdditionalData(additionalData.map(row => row[0].trim()));
+
+                additionalData.forEach((rowData, rowIndex) => {
+                    const tr = document.createElement('tr');
+                    rowData.forEach((cellData, colIndex) => {
+                        const td1 = document.createElement('td');
+                        td1.textContent = cellData;
+                        tr.appendChild(td1);
+
+                        const td2 = document.createElement('td');
+                        let value = 0;
+
+                        const currentRowValue = formatAdditionalData([cellData])[0];
+                        const table1CurrentRowValue = formattedData1[rowIndex] || formattedEndData1[rowIndex - 4];
+
+                        if (rowIndex < 4) {
+                            if (currentRowValue === table1CurrentRowValue) {
+                                value = 3;
+                            } else if (formattedData1.slice(0, 4).includes(currentRowValue)) {
+                                value = 1;
+                            }
+                        } else {
+                            const endTable1Value = formattedEndData1[rowIndex - 4];
+                            if (currentRowValue === endTable1Value) {
+                                value = 3;
+                            } else if (formattedEndData1.includes(currentRowValue)) {
+                                value = 1;
+                            }
+                        }
+                        
+                        td2.textContent = value;
+                        tr.appendChild(td2);
+                    });
+                    additionalTbody.appendChild(tr);
+                });
+                additionalTable.appendChild(additionalTbody);
+
+                const additionalDiv = document.getElementById('table2');
+                if (additionalDiv) {
+                    additionalDiv.innerHTML = '';
+                    additionalDiv.appendChild(additionalTable);
+                } else {
+                    console.error('Elemento com ID "table2" não encontrado');
+                }
+            }
+
+            // Função para criar a Tabela de Ranking
+function createRankingTable() {
+    const rankingTable = document.createElement('table');
+    const rankingTbody = document.createElement('tbody');
+
+    const rankingHeaders = ['Posição', 'Palpiteiro', 'Pontos', '%'];
+    const rankingHeaderRow = document.createElement('tr');
+    rankingHeaders.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        rankingHeaderRow.appendChild(th);
+    });
+    rankingTable.appendChild(rankingHeaderRow);
+
+    const table2 = document.querySelector('#table2 table');
+    if (table2) {
+        const table2Rows = table2.querySelectorAll('tr');
+        const col2 = [];
+        const col4 = [];
+        const col6 = [];
+        const col8 = [];
+
+        table2Rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 8) {
+                col2.push(parseInt(cells[1].textContent.trim()) || 0);
+                col4.push(parseInt(cells[3].textContent.trim()) || 0);
+                col6.push(parseInt(cells[5].textContent.trim()) || 0);
+                col8.push(parseInt(cells[7].textContent.trim()) || 0);
+            }
+        });
+
+        const sumCol2 = col2.reduce((a, b) => a + b, 0);
+        const sumCol4 = col4.reduce((a, b) => a + b, 0);
+        const sumCol6 = col6.reduce((a, b) => a + b, 0);
+        const sumCol8 = col8.reduce((a, b) => a + b, 0);
+
+        const scores = [
+            { header: 'Chavez', score: sumCol2 },
+            { header: 'Claudemir', score: sumCol4 },
+            { header: 'Pauloca', score: sumCol6 },
+            { header: 'Rodrigo', score: sumCol8 }
+        ];
+
+        scores.sort((a, b) => b.score - a.score);
+
+        let prevScore = -1;
+        let position = 1;
+scores.forEach((score, index) => {
+    const tr = document.createElement('tr');
+
+    const tdPosition = document.createElement('td');
+    if (score.score === prevScore) {
+        tdPosition.textContent = position - 1;
+    } else {
+        tdPosition.textContent = position;
+        prevScore = score.score;
+    }
+    tr.appendChild(tdPosition);
+    
+    const tdPalpiteiro = document.createElement('td');
+    tdPalpiteiro.textContent = score.header;
+    tr.appendChild(tdPalpiteiro);
+
+    const tdPontos = document.createElement('td');
+    tdPontos.textContent = score.score;
+    tr.appendChild(tdPontos);
+
+    const tdPercent = document.createElement('td');
+    tdPercent.textContent = ((score.score / 24) * 100).toFixed(2) + '%';
+    tr.appendChild(tdPercent);
+
+    // Define a cor e o estilo para todas as células da linha
+    const isFirstPlace = tdPosition.textContent === '1';
+    const color = isFirstPlace ? '#00ff00' : 'black';
+    const fontWeight = isFirstPlace ? 'bold' : 'normal';
+
+    [tdPosition, tdPalpiteiro, tdPontos, tdPercent].forEach(td => {
+        td.style.color = color;
+        td.style.fontWeight = fontWeight;
+    });
+
+    rankingTbody.appendChild(tr);
+    position++;
+});
+
+
+        rankingTable.appendChild(rankingTbody);
+
+        const rankingDiv = document.getElementById('ranking');
+        if (rankingDiv) {
+            rankingDiv.innerHTML = '';
+            rankingDiv.appendChild(rankingTable);
+        } else {
+            console.error('Elemento com ID "ranking" não encontrado');
+        }
+    } else {
+        console.error('Tabela não encontrada na página');
+    }
+}
+
+
+
+
+
+
+            // Carregar e exibir Tabela 1
+            Promise.all([fetchClassificacaoData(), fetchPontosJogosData()])
+                .then(([classificacao, pontosJogosData]) => {
+                    const outputTable = document.createElement('table');
+                    const thead = document.createElement('thead');
+                    const headerRow = document.createElement('tr');
+
+                    // Cabeçalhos das colunas
+                    const headerCell1 = document.createElement('th');
+                    headerCell1.colSpan = 2; // Colspan para unir duas colunas
+                    headerCell1.textContent = 'Classificação';
+                    headerRow.appendChild(headerCell1);
+                    
+                    const headerCell3 = document.createElement('th');
+                    headerCell3.textContent = 'P';
+                    headerRow.appendChild(headerCell3);
+                    
+                    const headerCell4 = document.createElement('th');
+                    headerCell4.textContent = 'J';
+                    headerRow.appendChild(headerCell4);
+                    
+                    thead.appendChild(headerRow);
+                    outputTable.appendChild(thead);
+
+                    const tbody = document.createElement('tbody');
+                    const { data, originalData } = classificacao;
+
+                    data.forEach((rowData, rowIndex) => {
+                        const tr = document.createElement('tr');
+
+                        // Coluna de imagem
+                        const newCell = document.createElement('td');
+                        newCell.className = 'new-column';
+                        const rightColumnValue = originalData[rowIndex] ? originalData[rowIndex][0] : '';
+                        let imageName = '';
+
+                        if (rowIndex < 9) {
+                            imageName = rightColumnValue.slice(4, -3).trim() + '.webp';
+                        } else {
+                            imageName = rightColumnValue.slice(5, -3).trim() + '.webp';
+                        }
+
+                        const img = document.createElement('img');
+                        img.src = imagePath + imageName;
+                        newCell.appendChild(img);
+                        tr.appendChild(newCell);
+
+                        // Preenche colunas 1 e 2
+                        rowData.forEach(cellData => {
+                            const td = document.createElement('td');
+                            td.textContent = cellData;
+                            tr.appendChild(td);
+                        });
+
+                        // Adiciona dados de Pontos e Jogos
+                        if (rowIndex < pontosJogosData.length) {
+                            const { pontos, jogos } = pontosJogosData[rowIndex];
+                            const pontosTd = document.createElement('td');
+                            pontosTd.textContent = pontos || 'N/A';
+                            tr.appendChild(pontosTd);
+
+                            const jogosTd = document.createElement('td');
+                            jogosTd.textContent = jogos || 'N/A';
+                            tr.appendChild(jogosTd);
+                        } else {
+                            // Caso não haja dados suficientes para Pontos e Jogos
+                            tr.appendChild(document.createElement('td'));
+                            tr.appendChild(document.createElement('td'));
+                        }
+
+                        tbody.appendChild(tr);
+                    });
+
+                    outputTable.appendChild(tbody);
+
+                    const outputDiv = document.getElementById('table1');
+                    if (outputDiv) {
+                        outputDiv.innerHTML = '';
+                        outputDiv.appendChild(outputTable);
+                    } else {
+                        console.error('Elemento com ID "table1" não encontrado');
+                    }
+
+                    // Criar Tabela 2 e Ranking após carregar Tabela 1
+                    createAdditionalTable(data);
+                    createRankingTable();
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar o conteúdo:', error);
+                });
+        });
+
+
+// Função para buscar e processar dados de Líderes
+const url = 'https://raw.githubusercontent.com/rosate2007/palpiteseriea/refs/heads/main/dados.json';
+const token = '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'; // Substitua pelo seu token do GitHub
+
+// Fazer a requisição com o token de autenticação
+fetch(url, {
+    headers: {
+        'Authorization': `token ${token}`
+    }
+})
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro ao buscar os dados');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // O conteúdo do arquivo vem em base64, então precisamos decodificá-lo
+        const content = atob(data.content);
+        const jsonData = JSON.parse(content);
+        console.log(jsonData);
+
+        // Aqui você pode inserir o código para processar ou exibir os dados como desejar
+    })
+    .catch(error => console.error('Erro ao buscar dados:', error));
+
+
+
+
+// Função para criar a Tabela de Líderes
+function createLideresTable(lideresData) {
+    const lideresTable = document.createElement('table');
+    const lideresTbody = document.createElement('tbody');
+
+    const lideresHeaders = ['Rodada', 'Líderes'];
+    const lideresHeaderRow = document.createElement('tr');
+    lideresHeaders.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        lideresHeaderRow.appendChild(th);
+    });
+    lideresTable.appendChild(lideresHeaderRow);
+
+    lideresData.forEach(lider => {
+        const tr = document.createElement('tr');
+
+        const tdRodada = document.createElement('td');
+        tdRodada.textContent = lider.rodada; // Supondo que cada líder tem uma propriedade "rodada"
+        tr.appendChild(tdRodada);
+
+        const tdLider = document.createElement('td');
+        tdLider.textContent = lider.nome; // Supondo que cada líder tem uma propriedade "nome"
+        tr.appendChild(tdLider);
+
+        lideresTbody.appendChild(tr);
+    });
+
+    lideresTable.appendChild(lideresTbody);
+
+    const lideresDiv = document.getElementById('lideres');
+    if (lideresDiv) {
+        lideresDiv.innerHTML = '';
+        lideresDiv.appendChild(lideresTable);
+    } else {
+        console.error('Elemento com ID "lideres" não encontrado');
+    }
+}
+
+// Carregar e exibir a tabela de Líderes após carregar as outras tabelas
+fetchLideresData().then(lideresData => {
+    if (Array.isArray(lideresData)) {
+        createLideresTable(lideresData);
+    } else {
+        console.error('Dados de líderes não são um array:', lideresData);
+    }
+});
+
+
+
+    </script>
