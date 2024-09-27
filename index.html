@@ -698,35 +698,45 @@ scores.forEach((score, index) => {
                 });
         });
 
-// Função para atualizar dados.json
-function updateDadosJson(maxRound, leaderName) {
+// Função para atualizar o arquivo dados.json
+function updateJsonFile(rodadaAtual, liderDaRodada) {
     fetch('path/to/dados.json')
         .then(response => response.json())
         .then(data => {
-            // Encontre o objeto correspondente à rodada máxima
-            const rodadaToUpdate = data.find(item => item.rodada === maxRound);
-            if (rodadaToUpdate) {
-                rodadaToUpdate.lider = leaderName;
+            // Encontra a rodada atual
+            const rodadaAtualData = data.find(item => item.rodada === rodadaAtual);
+            if (rodadaAtualData) {
+                // Atualiza o campo "lider" com os valores de liderDaRodada
+                rodadaAtualData.lider = liderDaRodada.join(', ');
+                
+                // Salva o arquivo atualizado (a implementação do salvamento pode variar)
+                return fetch('path/to/dados.json', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
             }
-            
-            // Salve os dados atualizados no arquivo
-            return fetch('path/to/dados.json', {
-                method: 'PUT', // ou POST, dependendo da sua implementação do backend
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
         })
         .then(() => {
-            console.log('dados.json atualizado com sucesso');
-            // Aqui você pode chamar a função para preencher a Tabela de Líderes
+            console.log('dados.json atualizado com sucesso!');
+            // Aqui você pode chamar a função para criar a tabela de líderes
             createLeadersTable();
         })
-        .catch(error => {
-            console.error('Erro ao atualizar dados.json:', error);
-        });
+        .catch(error => console.error('Erro ao atualizar dados.json:', error));
 }
+
+// Passo 1: Obter o máximo valor da coluna "J" da Tabela 1
+const maxRodada = Math.max(...Array.from(document.querySelectorAll('#table1 tbody tr td:nth-child(4)')).map(td => parseInt(td.textContent.trim())));
+
+// Passo 2: Obter os líderes da rodada
+const lideres = Array.from(document.querySelectorAll('#ranking tbody tr'))
+    .filter(row => parseInt(row.cells[0].textContent.trim()) === 1)
+    .map(row => row.cells[1].textContent.trim());
+
+// Passo 3: Atualizar o arquivo
+updateJsonFile(maxRodada, lideres);
 
 // Função para criar a Tabela de Líderes
 function createLeadersTable() {
@@ -757,14 +767,6 @@ function createLeadersTable() {
             console.error('Erro ao carregar dados.json:', error);
         });
 }
-
-// Após criar a Tabela de Ranking, adicione o seguinte código:
-const maxRound = Math.max(...colunasJ); // Supondo que colunasJ seja uma array contendo os valores da coluna "J"
-const leaderName = scores[0].header; // Obtenha o nome do líder da Tabela de Ranking
-
-updateDadosJson(maxRound, leaderName);
-
-
 
     </script>
 </head>
