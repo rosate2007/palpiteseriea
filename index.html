@@ -698,6 +698,71 @@ scores.forEach((score, index) => {
                 });
         });
 
+// Função para atualizar dados.json
+function updateDadosJson(maxRound, leaderName) {
+    fetch('path/to/dados.json')
+        .then(response => response.json())
+        .then(data => {
+            // Encontre o objeto correspondente à rodada máxima
+            const rodadaToUpdate = data.find(item => item.rodada === maxRound);
+            if (rodadaToUpdate) {
+                rodadaToUpdate.lider = leaderName;
+            }
+            
+            // Salve os dados atualizados no arquivo
+            return fetch('path/to/dados.json', {
+                method: 'PUT', // ou POST, dependendo da sua implementação do backend
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+        })
+        .then(() => {
+            console.log('dados.json atualizado com sucesso');
+            // Aqui você pode chamar a função para preencher a Tabela de Líderes
+            createLeadersTable();
+        })
+        .catch(error => {
+            console.error('Erro ao atualizar dados.json:', error);
+        });
+}
+
+// Função para criar a Tabela de Líderes
+function createLeadersTable() {
+    fetch('dados.json')
+        .then(response => response.json())
+        .then(data => {
+            const leadersTable = document.createElement('table');
+            const leadersTbody = document.createElement('tbody');
+
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                const tdRodada = document.createElement('td');
+                tdRodada.textContent = item.rodada;
+                const tdLider = document.createElement('td');
+                tdLider.textContent = item.lider || 'N/A'; // caso o lider não tenha sido definido
+
+                tr.appendChild(tdRodada);
+                tr.appendChild(tdLider);
+                leadersTbody.appendChild(tr);
+            });
+
+            leadersTable.appendChild(leadersTbody);
+            const leadersDiv = document.getElementById('tableLeaders'); // Certifique-se de que o ID esteja correto
+            leadersDiv.innerHTML = '';
+            leadersDiv.appendChild(leadersTable);
+        })
+        .catch(error => {
+            console.error('Erro ao carregar dados.json:', error);
+        });
+}
+
+// Após criar a Tabela de Ranking, adicione o seguinte código:
+const maxRound = Math.max(...colunasJ); // Supondo que colunasJ seja uma array contendo os valores da coluna "J"
+const leaderName = scores[0].header; // Obtenha o nome do líder da Tabela de Ranking
+
+updateDadosJson(maxRound, leaderName);
 
 
 
