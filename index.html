@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 
-    <link rel="preload" href="bg.jpeg" as="image">
+    
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -699,37 +699,7 @@ scores.forEach((score, index) => {
         });
 
 
-// Função para criar a Tabela de Líderes
-function createLeadersTable() {
-    fetch('https://rosate2007.github.io/palpiteseriea/dados.json')
-        .then(response => response.json())
-        .then(data => {
-            const leadersTable = document.createElement('table');
-            const leadersTbody = document.createElement('tbody');
-
-            data.forEach(item => {
-                const tr = document.createElement('tr');
-                const tdRodada = document.createElement('td');
-                tdRodada.textContent = item.rodada;
-                const tdLider = document.createElement('td');
-                tdLider.textContent = item.lider || 'N/A'; // caso o lider não tenha sido definido
-
-                tr.appendChild(tdRodada);
-                tr.appendChild(tdLider);
-                leadersTbody.appendChild(tr);
-            });
-
-            leadersTable.appendChild(leadersTbody);
-            const leadersDiv = document.getElementById('tableLeaders'); // Certifique-se de que o ID esteja correto
-            leadersDiv.innerHTML = '';
-            leadersDiv.appendChild(leadersTable);
-        })
-        .catch(error => {
-            console.error('Erro ao carregar dados.json:', error);
-        });
-}
-
-    </script>
+ </script>
 </head>
 <body>
 
