@@ -704,7 +704,7 @@ scores.forEach((score, index) => {
 
 // Função para atualizar os dados dos líderes
 async function updateLideresData() {
-    const url = 'https://rosate2007.github.io/palpiteseriea/dados.json';
+    const url = 'dados.json';
 
     try {
         // Buscar os dados existentes
@@ -736,7 +736,7 @@ updateLideresData();
 	    
 	    // Função para criar a Tabela de Líderes
 function createLideresTable() {
-    fetch('https://rosate2007.github.io/palpiteseriea/dados.json')
+    fetch('dados.json')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Erro ao carregar dados dos líderes: ' + response.statusText);
