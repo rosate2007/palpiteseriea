@@ -1,16 +1,14 @@
-{
-    "lideres": [
-        { "rodada": 27, "nome": "" },
-        { "rodada": 28, "nome": "" },
-        { "rodada": 29, "nome": "" },
-	{ "rodada": 30, "nome": "" },
-	{ "rodada": 31, "nome": "" },
-	{ "rodada": 32, "nome": "" },
-	{ "rodada": 33, "nome": "" },
-	{ "rodada": 34, "nome": "" },
-	{ "rodada": 35, "nome": "" },
-	{ "rodada": 36, "nome": "" },
-	{ "rodada": 37, "nome": "" },
-	{ "rodada": 38, "nome": "" }
-    ]
-}
+[
+    { "rodada": 27, "lider": "" },
+    { "rodada": 28, "lider": "" },
+    { "rodada": 29, "lider": "" },
+    { "rodada": 30, "lider": "" },
+    { "rodada": 31, "lider": "" },
+    { "rodada": 32, "lider": "" },
+    { "rodada": 33, "lider": "" },
+    { "rodada": 34, "lider": "" },
+    { "rodada": 35, "lider": "" },
+    { "rodada": 36, "lider": "" },
+    { "rodada": 37, "lider": "" },
+    { "rodada": 38, "lider": "" }
+]
