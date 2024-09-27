@@ -700,78 +700,77 @@ scores.forEach((score, index) => {
 
 
 
+// Função para atualizar dados no arquivo dados.json
+function updateLideresData() {
+    // Primeiro, precisamos buscar os dados da tabela de Ranking e da Tabela 1
+    const rankingTable = document.querySelector('#ranking table');
+    const table1 = document.querySelector('#table1 table');
 
-	    
-	    // Função para carregar dados do arquivo dados.json
-    function fetchLideresData() {
-        return fetch('dados.json')
-            .then(response => response.json())
-            .then(data => {
-                return data; // Retorna os dados para uso na tabela
-            })
-            .catch(error => {
-                console.error('Erro ao buscar dados de líderes:', error);
-                return [];
-            });
+    if (!rankingTable || !table1) {
+        console.error('Uma das tabelas não foi encontrada.');
+        return;
     }
 
-// Função para criar a Tabela de Líderes
-function createLideresTable() {
+    // Buscar os dados da Tabela de Ranking
+    const rankingRows = rankingTable.querySelectorAll('tr');
+    const lideres = [];
+    rankingRows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 2) {
+            const posicao = parseInt(cells[0].textContent.trim());
+            const palpiteiro = cells[1].textContent.trim();
+            if (posicao === 1) {
+                lideres.push(palpiteiro);
+            }
+        }
+    });
+
+    // Buscar o valor máximo da coluna "J" da Tabela 1
+    const table1Rows = table1.querySelectorAll('tr');
+    let maxRodada = 0;
+    table1Rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 5) { // Supondo que a coluna "J" é a 5ª
+            const jogos = parseInt(cells[4].textContent.trim()); // Index 4 para "J"
+            if (jogos > maxRodada) {
+                maxRodada = jogos;
+            }
+        }
+    });
+
+    // Atualizar o arquivo dados.json
     fetch('dados.json')
         .then(response => response.json())
-        .then(lideresData => {
-            const lideresTable = document.createElement('table');
-            const lideresTbody = document.createElement('tbody');
-
-            const lideresHeaders = ['Rodada', 'Líderes'];
-            const lideresHeaderRow = document.createElement('tr');
-            lideresHeaders.forEach(header => {
-                const th = document.createElement('th');
-                th.textContent = header;
-                lideresHeaderRow.appendChild(th);
-            });
-            lideresTable.appendChild(lideresHeaderRow);
-
-            // Preencher a tabela com os dados de líderes
-            lideresData.forEach(item => {
-                const tr = document.createElement('tr');
-                
-                // Coluna Rodada
-                const tdRodada = document.createElement('td');
-                tdRodada.textContent = item.rodada; // Supondo que "rodada" é o campo no JSON
-                tr.appendChild(tdRodada);
-                
-                // Coluna Líder
-                const tdLider = document.createElement('td');
-                tdLider.textContent = item.lider; // Supondo que "lider" é o campo no JSON
-                tdLider.style.width = '30%'; // Define a largura da coluna para 30%
-                tr.appendChild(tdLider);
-                
-                lideresTbody.appendChild(tr);
-            });
-
-            lideresTable.appendChild(lideresTbody);
-            lideresTable.style.color = 'white'; // Define a cor da fonte como branca
-            lideresTable.style.textAlign = 'left'; // Alinha o texto à esquerda
-
-            const lideresDiv = document.createElement('div');
-            lideresDiv.className = 'table-container'; // Usar a mesma classe para estilo
-            lideresDiv.appendChild(lideresTable);
-
-            const containerDiv = document.querySelector('.container'); // A mesma div onde as outras tabelas estão
-            if (containerDiv) {
-                containerDiv.appendChild(lideresDiv);
+        .then(data => {
+            const rodadaToUpdate = data.find(item => item.rodada === maxRodada);
+            if (rodadaToUpdate) {
+                rodadaToUpdate.lideres = lideres; // Atualiza os líderes
+                // Salvar os dados atualizados
+                return fetch('dados.json', {
+                    method: 'PUT', // Usar o método apropriado para salvar os dados
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
             } else {
-                console.error('Elemento com a classe "container" não encontrado');
+                console.error('Rodada não encontrada no dados.json');
             }
         })
+        .then(() => {
+            console.log('Dados de líderes atualizados com sucesso.');
+            // Criar a tabela de Líderes após atualizar os dados
+            createLideresTable();
+        })
         .catch(error => {
-            console.error('Erro ao carregar dados dos Líderes:', error);
+            console.error('Erro ao atualizar os dados de líderes:', error);
         });
 }
 
-// Chamar a função para criar a tabela de líderes
-createLideresTable();
+// Chamar a função para atualizar os dados
+updateLideresData();
+
+	    
 
     </script>
 </head>
