@@ -2,69 +2,330 @@
 <html lang="pt-BR">
 <head>
 
-    
+    <link rel="preload" href="imgs/bg/bg.jpeg" as="image">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Palpite Brasileirão Série A</title>
-    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-
-</head>
-<body>
-
-    <table class="header-table">
-        <tr>
-            <td>
-                <h1>PALPITE BRASILEIRÃO SÉRIE A</h1>
-            </td>
-        </tr>
-    </table>
-    <div class="container">
-        
-        <div class="table-container" id="table1"></div>
-        <div class="table-container" id="table2"></div>
-        <div class="table-container" id="ranking"></div>
-	<div class="table-container" id="lideres"></div>
-
-    </div>
-</body>
-</html>
+    <style>
 
 
+/* Cor da fonte das 4 primeiras linhas das colunas 1, 3, 5 e 7 da Tabela 2 */
+#table2 table tbody tr:nth-of-type(-n+4) td:nth-child(1),
+#table2 table tbody tr:nth-of-type(-n+4) td:nth-child(3),
+#table2 table tbody tr:nth-of-type(-n+4) td:nth-child(5),
+#table2 table tbody tr:nth-of-type(-n+4) td:nth-child(7) {
+    color: #00ff00; /* Verde */
+}
 
+/* Cor da fonte das 4 últimas linhas das colunas 1, 3, 5 e 7 da Tabela 2 */
+#table2 table tbody tr:nth-last-of-type(-n+4) td:nth-child(1),
+#table2 table tbody tr:nth-last-of-type(-n+4) td:nth-child(3),
+#table2 table tbody tr:nth-last-of-type(-n+4) td:nth-child(5),
+#table2 table tbody tr:nth-last-of-type(-n+4) td:nth-child(7) {
+    color: #ff3b1f; /* Vermelho */
+}
+
+/* Cor de fundo e da fonte das colunas 2, 4, 6 e 8 da Tabela 2 */
+#table2 table td:nth-child(2),
+#table2 table td:nth-child(4),
+#table2 table td:nth-child(6),
+#table2 table td:nth-child(8) {
+    background-color: #000000; /* Preto */
+    color: #ffffff; /* Branco */
+}
+
+
+/* Cor da fonte das 4 primeiras linhas da coluna 2 da Tabela 1 */
+#table1 table tbody tr:nth-of-type(-n+4) td:nth-child(2) {
+    color: #00ff00; /* Verde */
+}
+
+/* Cor da fonte das 4 últimas linhas da coluna 2 da Tabela 1 */
+#table1 table tbody tr:nth-last-of-type(-n+4) td:nth-child(2) {
+    color: #ff3b1f; /* Vermelho */
+}
+
+/* Cor da fonte para as demais linhas e colunas da Tabela 1 */
+#table1 table tbody td {
+    color: #ffffff; /* Branco */
+}
+
+/* Fonte em negrito para todas as linhas da coluna 3 da Tabela 1 */
+#table1 table tbody td:nth-child(3) {
+    font-weight: bold; /* Negrito */
+}
+
+/* Fonte em negrito para todas as linhas da coluna 3 da Tabela 1 */
+#table1 table tbody td:nth-child(3) {
+    font-weight: bold; /* Negrito */
+}
+
+
+        body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: url('imgs/bg/bg.jpeg') no-repeat center center fixed; /* Imagem de fundo */
+    background-size: cover; /* Ajusta o tamanho da imagem de fundo */
+    
+    background-attachment: scroll;
+    color: #333; /* Texto mais escuro para melhor leitura */
+  
+}
+
+h1 {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 24px; /* Aumenta o tamanho da fonte do título */
+    color: #0275d8; /* Cor azul para o título */
+    white-space: nowrap; /* Impede a quebra de linha */
+    overflow: hidden; /* Oculta o texto que não cabe */
+    text-overflow: ellipsis; /* Adiciona reticências se o texto for muito longo */
+}
+
+
+.header-table {
+            width: 100%;
+            border: none;
+            background-color: rgba(2, 117, 216, 0.3); /* Azul com transparência */
+            margin-bottom: 2px;
+        }
+
+        .header-table td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 22px; /* Aumenta o tamanho da fonte do título */
+            color: #ffffff; /* Texto branco */
+    	    white-space: nowrap; /* Impede a quebra de linha */
+    	    overflow: hidden; /* Oculta o texto que não cabe */
+    	    text-overflow: ellipsis; /* Adiciona reticências se o texto for muito longo */
+        }
+
+
+.container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+}
+
+.table-container {
+    background-color: transparent; /* Fundo transparente para as tabelas */
+    /*border-radius: 8px;*/ /* Bordas arredondadas */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+    background-color: transparent; /* Fundo transparente para a tabela */
+}
+
+th, td {
+    border-top: 1px solid rgba(255, 255, 255, 0.4); /* Borda horizontal superior branca com 70% de opacidade */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4); /* Borda horizontal inferior branca com 70% de opacidade */
+    border-right: none; /* Remove a borda vertical direita */
+    border-left: none; /* Remove a borda vertical esquerda */
+    padding: 7px;
+    text-align: left;
+    font-size: 1em; /* Fonte ajustada para melhor leitura */
+    color: #99E89D; /* Texto em cinza para contraste suave */
+    background-color: transparent; /* Fundo transparente para as células */
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+}
+
+th {
+    background-color: rgba(2, 117, 216, 0.7); /* Cor azul com transparência para cabeçalhos */
+    color: #fff; /* Texto branco nos cabeçalhos */
+}
+
+tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.0); /* Fundo branco com transparência para linhas ímpares */
+}
+
+tr:nth-of-type(even) {
+    background-color: rgba(255, 255, 255, 0.0); /* Fundo branco mais transparente para linhas pares */
+}
+
+tr:nth-of-type(-n+4) {
+    background-color: rgba(255, 255, 255, 0.0); /* Fundo verde claro com transparência para as primeiras linhas */
+}
+
+tr:nth-last-of-type(-n+4) {
+    background-color: rgba(255, 255, 255, 0.0); /* Fundo vermelho claro com transparência para as últimas linhas */
+}
+
+/* Media Queries para dispositivos móveis */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        flex-direction: column;
+    }
+
+    table {
+        font-size: 1.0em; /* Ajusta a fonte para dispositivos menores */
+    }
+
+    th, td {
+        padding: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    table {
+        font-size: 0.9em; /* Ajusta ainda mais a fonte para telas muito pequenas */
+    }
+
+    th, td {
+        padding: 6px;
+    }
+}
+
+.new-column {
+    background-color: transparent; /* Fundo transparente */
+    text-align: center;
+    vertical-align: middle;
+    width: 10%;
+    height: 35px; /* Define uma altura fixa para as células da coluna */
+}
+
+.new-column img {
+    display: block;
+    margin: 0 auto;
+    width: auto; /* Permite que a largura da imagem seja proporcional */
+    max-width: 60%; /* Limita a largura da imagem */
+    max-height: 100%; /* Limita a altura da imagem à altura da célula */
+    object-fit: contain; /* Ajusta a imagem para se encaixar dentro da célula, preservando proporções */
+}
+
+table td:first-child, table th:first-child {
+    width: 60px; /* Ajuste o valor conforme necessário */
+}
+
+#ranking table th, #ranking table td {
+    text-align: left;
+}
+
+#ranking table th:nth-child(1),
+#ranking table td:nth-child(1) {
+    width: 25%;
+}
+#ranking table th:nth-child(2),
+#ranking table td:nth-child(2) {
+    width: 35%;
+}
+#ranking table th:nth-child(3),
+#ranking table td:nth-child(3) {
+    width: 20%;
+}
+#ranking table th:nth-child(4),
+#ranking table td:nth-child(4) {
+    width: 20%;
+}
+
+.table-container + .table-container {
+    margin-top: 30px;
+}
+
+#table2 table td:nth-child(1),
+	#table2 table th:nth-child(1) {
+    		width: 23%; /* Ajuste o valor conforme necessário */   } 
+
+	#table2 table td:nth-child(2),
+	#table2 table th:nth-child(2) {
+    		width: 2.5%; /* Ajuste o valor conforme necessário */   } 
+
+	#table2 table td:nth-child(3),
+	#table2 table th:nth-child(3) {
+    		width: 23%; /* Ajuste o valor conforme necessário */   } 
+
+	#table2 table td:nth-child(4),
+	#table2 table th:nth-child(4) {
+    		width: 2.5%; /* Ajuste o valor conforme necessário */   } 
+
+	#table2 table td:nth-child(5),
+	#table2 table th:nth-child(5) {
+    		width: 23%; /* Ajuste o valor conforme necessário */   } 
+
+	#table2 table td:nth-child(6),
+	#table2 table th:nth-child(6) {
+    		width: 2.5%; /* Ajuste o valor conforme necessário */   } 
+
+	#table2 table td:nth-child(7),
+	#table2 table th:nth-child(7) {
+    		width: 21.1%; /* Ajuste o valor conforme necessário */   } 
+
+	#table2 table td:nth-child(8),
+	#table2 table th:nth-child(8) {
+    		width: 2.5%; /* Ajuste o valor conforme necessário */   } 
+
+#ranking table td, 
+#ranking table th {
+
+    color: #ffffff; /* Fonte branca */
+}
+
+th {
+    background-color: rgba(2, 117, 216, 0.7); /* Cor azul com transparência para cabeçalhos */
+    color: #fff; /* Texto branco nos cabeçalhos */
+}
+
+/*#ranking table tr:nth-of-type(1) td {
+    font-weight: bold; /* Fonte em negrito */
+    color: #00ff00; 
+}*/
+
+
+#ranking table tr:nth-of-type(1) {
+    background-color: transparent !important; /* Garante que o fundo seja transparente */
+}
+
+
+        /* Espaços entre tabelas */
+        .table-container + .table-container {
+            margin-top: 15px; /* Adiciona espaço entre tabelas */
+
+#table1 table tbody tr {
+    height: 40px; /* Define a altura das linhas */
+}
+
+#table1 table tbody tr {
+    height: 150px !important; /* Força a altura das linhas */
+}
+
+#table1 table td {
+    vertical-align: middle !important; /* Centraliza o conteúdo verticalmente */
+    overflow: hidden !important; /* Impede o conteúdo de expandir a altura da célula */
+    white-space: nowrap !important; /* Evita quebra de linha dentro das células */
+    text-overflow: ellipsis !important; /* Adiciona reticências se o texto for muito longo */
+    padding: 0 !important; /* Remove o preenchimento para garantir uniformidade */
+    height: 150px !important; /* Força a altura das células */
+    line-height: 150px !important; /* Centraliza o conteúdo */
+}
+
+
+
+}
+
+
+    </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const urlClassificacao = 'https://gauchazh.clicrbs.com.br/esportes/tabelas/brasileirao';
             const urlPontosJogos = 'https://gauchazh.clicrbs.com.br/esportes/tabelas/brasileirao'; // Pode ser a mesma URL ou outra se necessário
             const imagePath = 'imgs/';
-
-
-const url = 'https://rosate2007.github.io/palpiteseriea/dados.json'; // Link para o arquivo JSON
-const token = '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'; // Substitua pelo seu token de acesso pessoal
-
-fetch(url, {
-    method: 'GET',
-    headers: {
-        'Authorization': `token ${token}`, // Usando o token na autorização
-        'Accept': 'application/vnd.github.v3.raw' // Aceitar resposta em formato raw
-    }
-})
-.then(response => {
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    }
-    return response.json();
-})
-.then(data => {
-    console.log(data); // Aqui você pode trabalhar com os dados JSON
-})
-.catch(error => {
-    console.error('There has been a problem with your fetch operation:', error);
-});
-
-
-
 
             // Função para buscar e processar dados de classificação
             function fetchClassificacaoData() {
@@ -313,7 +574,7 @@ scores.forEach((score, index) => {
 
     // Define a cor e o estilo para todas as células da linha
     const isFirstPlace = tdPosition.textContent === '1';
-    const color = isFirstPlace ? '#00ff00' : 'black';
+    const color = isFirstPlace ? '#00ff00' : 'white';
     const fontWeight = isFirstPlace ? 'bold' : 'normal';
 
     [tdPosition, tdPalpiteiro, tdPontos, tdPercent].forEach(td => {
@@ -438,83 +699,82 @@ scores.forEach((score, index) => {
         });
 
 
-// Função para buscar e processar dados de Líderes
-const url = 'https://rosate2007.github.io/palpiteseriea/dados.json';
-const token = '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'; // Substitua pelo seu token do GitHub
-
-// Fazer a requisição com o token de autenticação
-fetch(url, {
-    headers: {
-        'Authorization': `token ${token}`
+    // Função para carregar dados do arquivo dados.json
+    function fetchLideresData() {
+        return fetch('dados.json')
+            .then(response => response.json())
+            .then(data => {
+                return data; // Retorna os dados para uso na tabela
+            })
+            .catch(error => {
+                console.error('Erro ao buscar dados de líderes:', error);
+                return [];
+            });
     }
-})
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Erro ao buscar os dados');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // O conteúdo do arquivo vem em base64, então precisamos decodificá-lo
-        const content = atob(data.content);
-        const jsonData = JSON.parse(content);
-        console.log(jsonData);
 
-        // Aqui você pode inserir o código para processar ou exibir os dados como desejar
-    })
-    .catch(error => console.error('Erro ao buscar dados:', error));
+    // Função para criar a tabela Líderes
+    function createLideresTable(lideresData) {
+        const lideresTable = document.createElement('table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
 
+        // Criar a linha de cabeçalho
+        const headerRow = document.createElement('tr');
+        const rodadaHeader = document.createElement('th');
+        rodadaHeader.textContent = 'Rodada';
+        const liderHeader = document.createElement('th');
+        liderHeader.textContent = 'Líderes';
+        headerRow.appendChild(rodadaHeader);
+        headerRow.appendChild(liderHeader);
+        thead.appendChild(headerRow);
 
+        // Preencher a tabela com dados do JSON
+        lideresData.forEach(lider => {
+            const tr = document.createElement('tr');
 
+            const rodadaTd = document.createElement('td');
+            rodadaTd.textContent = lider.rodada;
+            tr.appendChild(rodadaTd);
 
-// Função para criar a Tabela de Líderes
-function createLideresTable(lideresData) {
-    const lideresTable = document.createElement('table');
-    const lideresTbody = document.createElement('tbody');
+            const liderTd = document.createElement('td');
+            liderTd.textContent = lider.lider;
+            tr.appendChild(liderTd);
 
-    const lideresHeaders = ['Rodada', 'Líderes'];
-    const lideresHeaderRow = document.createElement('tr');
-    lideresHeaders.forEach(header => {
-        const th = document.createElement('th');
-        th.textContent = header;
-        lideresHeaderRow.appendChild(th);
-    });
-    lideresTable.appendChild(lideresHeaderRow);
+            tbody.appendChild(tr);
+        });
 
-    lideresData.forEach(lider => {
-        const tr = document.createElement('tr');
+        lideresTable.appendChild(thead);
+        lideresTable.appendChild(tbody);
 
-        const tdRodada = document.createElement('td');
-        tdRodada.textContent = lider.rodada; // Supondo que cada líder tem uma propriedade "rodada"
-        tr.appendChild(tdRodada);
-
-        const tdLider = document.createElement('td');
-        tdLider.textContent = lider.nome; // Supondo que cada líder tem uma propriedade "nome"
-        tr.appendChild(tdLider);
-
-        lideresTbody.appendChild(tr);
-    });
-
-    lideresTable.appendChild(lideresTbody);
-
-    const lideresDiv = document.getElementById('lideres');
-    if (lideresDiv) {
-        lideresDiv.innerHTML = '';
+        // Inserir a tabela no fim da página
+        const lideresDiv = document.createElement('div');
+        lideresDiv.classList.add('table-container');
+        lideresDiv.id = 'lideres';
         lideresDiv.appendChild(lideresTable);
-    } else {
-        console.error('Elemento com ID "lideres" não encontrado');
+        document.body.appendChild(lideresDiv);
     }
-}
 
-// Carregar e exibir a tabela de Líderes após carregar as outras tabelas
-fetchLideresData().then(lideresData => {
-    if (Array.isArray(lideresData)) {
+    // Carregar e exibir a tabela Líderes
+    fetchLideresData().then(lideresData => {
         createLideresTable(lideresData);
-    } else {
-        console.error('Dados de líderes não são um array:', lideresData);
-    }
-});
-
-
+    });
 
     </script>
+</head>
+<body>
+
+    <table class="header-table">
+        <tr>
+            <td>
+                <h1>PALPITE BRASILEIRÃO SÉRIE A</h1>
+            </td>
+        </tr>
+    </table>
+    <div class="container">
+        
+        <div class="table-container" id="table1"></div>
+        <div class="table-container" id="table2"></div>
+        <div class="table-container" id="ranking"></div>
+    </div>
+</body>
+</html>
