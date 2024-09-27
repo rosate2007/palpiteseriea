@@ -698,58 +698,59 @@ scores.forEach((score, index) => {
                 });
         });
 
-	    // Função para buscar dados da URL dos líderes
-function fetchLideresData() {
-    return fetch('https://rosate2007.github.io/palpiteseriea/dados.json')
-        .then(response => response.json())
-        .then(data => data.lideres); // Supondo que os dados estão no formato correto
+// Função para criar a Tabela de Líderes
+function createLideresTable() {
+    fetch('https://rosate2007.github.io/palpiteseriea/dados.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao carregar dados dos líderes: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const lideresTable = document.createElement('table');
+            const lideresTbody = document.createElement('tbody');
+
+            const lideresHeaders = ['Rodada', 'Líder'];
+            const lideresHeaderRow = document.createElement('tr');
+            lideresHeaders.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                lideresHeaderRow.appendChild(th);
+            });
+            lideresTable.appendChild(lideresHeaderRow);
+
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+
+                const tdRodada = document.createElement('td');
+                tdRodada.textContent = item.rodada;
+                tr.appendChild(tdRodada);
+
+                const tdLider = document.createElement('td');
+                tdLider.textContent = item.lider || 'N/A'; // Exibe 'N/A' se não houver líder
+                tr.appendChild(tdLider);
+
+                lideresTbody.appendChild(tr);
+            });
+
+            lideresTable.appendChild(lideresTbody);
+
+            const lideresDiv = document.getElementById('lideres');
+            if (lideresDiv) {
+                lideresDiv.innerHTML = '';
+                lideresDiv.appendChild(lideresTable);
+            } else {
+                console.error('Elemento com ID "lideres" não encontrado');
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar dados dos líderes:', error);
+        });
 }
 
-// Função para criar a tabela de Líderes
-function createLideresTable(lideres) {
-    const lideresTable = document.createElement('table');
-    const lideresTbody = document.createElement('tbody');
-
-    const lideresHeaders = ['Rodada', 'Líder'];
-    const lideresHeaderRow = document.createElement('tr');
-    lideresHeaders.forEach(header => {
-        const th = document.createElement('th');
-        th.textContent = header;
-        lideresHeaderRow.appendChild(th);
-    });
-    lideresTable.appendChild(lideresHeaderRow);
-
-    lideres.forEach(lider => {
-        const tr = document.createElement('tr');
-        const tdRodada = document.createElement('td');
-        tdRodada.textContent = lider.rodada; // Ajuste de acordo com a estrutura do JSON
-        const tdLider = document.createElement('td');
-        tdLider.textContent = lider.lider; // Ajuste de acordo com a estrutura do JSON
-
-        tr.appendChild(tdRodada);
-        tr.appendChild(tdLider);
-        lideresTbody.appendChild(tr);
-    });
-
-    lideresTable.appendChild(lideresTbody);
-
-    const lideresDiv = document.getElementById('lideres');
-    if (lideresDiv) {
-        lideresDiv.innerHTML = '';
-        lideresDiv.appendChild(lideresTable);
-    } else {
-        console.error('Elemento com ID "lideres" não encontrado');
-    }
-}
-
-// Carregar e exibir a tabela de Líderes
-fetchLideresData()
-    .then(lideres => {
-        createLideresTable(lideres);
-    })
-    .catch(error => {
-        console.error('Erro ao carregar dados dos líderes:', error);
-    });
+// Chame a função para criar a tabela de Líderes
+createLideresTable();
 
 
  </script>
