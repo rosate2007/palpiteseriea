@@ -712,7 +712,7 @@ scores.forEach((score, index) => {
             });
     }
 
-    // Função para criar a Tabela de Líderes
+// Função para criar a Tabela de Líderes
 function createLideresTable() {
     fetch('dados.json')
         .then(response => response.json())
@@ -732,12 +732,16 @@ function createLideresTable() {
             // Preencher a tabela com os dados de líderes
             lideresData.forEach(item => {
                 const tr = document.createElement('tr');
+                
+                // Coluna Rodada
                 const tdRodada = document.createElement('td');
                 tdRodada.textContent = item.rodada; // Supondo que "rodada" é o campo no JSON
                 tr.appendChild(tdRodada);
                 
+                // Coluna Líder
                 const tdLider = document.createElement('td');
                 tdLider.textContent = item.lider; // Supondo que "lider" é o campo no JSON
+                tdLider.style.width = '30%'; // Define a largura da coluna para 30%
                 tr.appendChild(tdLider);
                 
                 lideresTbody.appendChild(tr);
@@ -745,6 +749,7 @@ function createLideresTable() {
 
             lideresTable.appendChild(lideresTbody);
             lideresTable.style.color = 'white'; // Define a cor da fonte como branca
+            lideresTable.style.textAlign = 'left'; // Alinha o texto à esquerda
 
             const lideresDiv = document.createElement('div');
             lideresDiv.className = 'table-container'; // Usar a mesma classe para estilo
