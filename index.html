@@ -700,7 +700,7 @@ scores.forEach((score, index) => {
 
 // Função para atualizar o arquivo dados.json
 function updateJsonFile(rodadaAtual, liderDaRodada) {
-    fetch('path/to/dados.json')
+    fetch('dados.json')
         .then(response => response.json())
         .then(data => {
             // Encontra a rodada atual
