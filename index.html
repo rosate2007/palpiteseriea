@@ -698,7 +698,51 @@ scores.forEach((score, index) => {
                 });
         });
 
-// Função para criar a Tabela de Líderes
+
+	    // Função para atualizar o arquivo JSON
+function updateLideresData() {
+    fetch('https://rosate2007.github.io/palpiteseriea/dados.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao carregar dados dos líderes: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Atualiza o campo 'lider' para a rodada 27
+            const rodadaToUpdate = 27;
+            const liderToUpdate = 'Claudemir';
+
+            const updatedData = data.map(item => {
+                if (item.rodada === rodadaToUpdate) {
+                    item.lider = liderToUpdate;
+                }
+                return item;
+            });
+
+            // Salvar os dados atualizados no repositório
+            saveUpdatedData(updatedData);
+        })
+        .catch(error => {
+            console.error('Erro ao carregar dados dos líderes:', error);
+        });
+}
+
+// Função para salvar os dados atualizados
+function saveUpdatedData(updatedData) {
+    // Aqui você precisaria da lógica para enviar os dados de volta para o repositório.
+    // Por exemplo, se estiver usando a API do GitHub, você deve autenticar e fazer uma solicitação PUT para atualizar o arquivo.
+    console.log('Dados atualizados:', updatedData);
+    // Adicione sua lógica para salvar os dados no repositório aqui.
+}
+
+// Chame a função para atualizar os dados
+updateLideresData();
+
+	    
+	    
+	    
+	    // Função para criar a Tabela de Líderes
 function createLideresTable() {
     fetch('https://rosate2007.github.io/palpiteseriea/dados.json')
         .then(response => {
