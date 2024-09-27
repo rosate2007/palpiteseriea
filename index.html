@@ -712,52 +712,58 @@ scores.forEach((score, index) => {
             });
     }
 
-    // Função para criar a tabela Líderes
-    function createLideresTable(lideresData) {
-        const lideresTable = document.createElement('table');
-        const thead = document.createElement('thead');
-        const tbody = document.createElement('tbody');
+    // Função para criar a Tabela de Líderes
+function createLideresTable() {
+    fetch('dados.json')
+        .then(response => response.json())
+        .then(lideresData => {
+            const lideresTable = document.createElement('table');
+            const lideresTbody = document.createElement('tbody');
 
-        // Criar a linha de cabeçalho
-        const headerRow = document.createElement('tr');
-        const rodadaHeader = document.createElement('th');
-        rodadaHeader.textContent = 'Rodada';
-        const liderHeader = document.createElement('th');
-        liderHeader.textContent = 'Líderes';
-        headerRow.appendChild(rodadaHeader);
-        headerRow.appendChild(liderHeader);
-        thead.appendChild(headerRow);
+            const lideresHeaders = ['Rodada', 'Líderes'];
+            const lideresHeaderRow = document.createElement('tr');
+            lideresHeaders.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                lideresHeaderRow.appendChild(th);
+            });
+            lideresTable.appendChild(lideresHeaderRow);
 
-        // Preencher a tabela com dados do JSON
-        lideresData.forEach(lider => {
-            const tr = document.createElement('tr');
+            // Preencher a tabela com os dados de líderes
+            lideresData.forEach(item => {
+                const tr = document.createElement('tr');
+                const tdRodada = document.createElement('td');
+                tdRodada.textContent = item.rodada; // Supondo que "rodada" é o campo no JSON
+                tr.appendChild(tdRodada);
+                
+                const tdLider = document.createElement('td');
+                tdLider.textContent = item.lider; // Supondo que "lider" é o campo no JSON
+                tr.appendChild(tdLider);
+                
+                lideresTbody.appendChild(tr);
+            });
 
-            const rodadaTd = document.createElement('td');
-            rodadaTd.textContent = lider.rodada;
-            tr.appendChild(rodadaTd);
+            lideresTable.appendChild(lideresTbody);
+            lideresTable.style.color = 'white'; // Define a cor da fonte como branca
 
-            const liderTd = document.createElement('td');
-            liderTd.textContent = lider.lider;
-            tr.appendChild(liderTd);
+            const lideresDiv = document.createElement('div');
+            lideresDiv.className = 'table-container'; // Usar a mesma classe para estilo
+            lideresDiv.appendChild(lideresTable);
 
-            tbody.appendChild(tr);
+            const containerDiv = document.querySelector('.container'); // A mesma div onde as outras tabelas estão
+            if (containerDiv) {
+                containerDiv.appendChild(lideresDiv);
+            } else {
+                console.error('Elemento com a classe "container" não encontrado');
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar dados dos Líderes:', error);
         });
+}
 
-        lideresTable.appendChild(thead);
-        lideresTable.appendChild(tbody);
-
-        // Inserir a tabela no fim da página
-        const lideresDiv = document.createElement('div');
-        lideresDiv.classList.add('table-container');
-        lideresDiv.id = 'lideres';
-        lideresDiv.appendChild(lideresTable);
-        document.body.appendChild(lideresDiv);
-    }
-
-    // Carregar e exibir a tabela Líderes
-    fetchLideresData().then(lideresData => {
-        createLideresTable(lideresData);
-    });
+// Chamar a função para criar a tabela de líderes
+createLideresTable();
 
     </script>
 </head>
