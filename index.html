@@ -700,7 +700,7 @@ scores.forEach((score, index) => {
 
 // Função para atualizar o arquivo dados.json
 function updateJsonFile(rodadaAtual, liderDaRodada) {
-    fetch('dados.json')
+    fetch('https://rosate2007.github.io/palpiteseriea/dados.json')
         .then(response => response.json())
         .then(data => {
             // Encontra a rodada atual
@@ -710,7 +710,7 @@ function updateJsonFile(rodadaAtual, liderDaRodada) {
                 rodadaAtualData.lider = liderDaRodada.join(', ');
                 
                 // Salva o arquivo atualizado (a implementação do salvamento pode variar)
-                return fetch('dados.json', {
+                return fetch('https://rosate2007.github.io/palpiteseriea/dados.json', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -740,7 +740,7 @@ updateJsonFile(maxRodada, lideres);
 
 // Função para criar a Tabela de Líderes
 function createLeadersTable() {
-    fetch('dados.json')
+    fetch('https://rosate2007.github.io/palpiteseriea/dados.json')
         .then(response => response.json())
         .then(data => {
             const leadersTable = document.createElement('table');
