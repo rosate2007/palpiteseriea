@@ -699,7 +699,64 @@ scores.forEach((score, index) => {
         });
 
 
-    // Função para carregar dados do arquivo dados.json
+
+	    // Função para atualizar dados no dados.json e criar a Tabela de Líderes
+function updateLideresDataAndCreateTable() {
+    // 1. Carregar dados da Tabela 1 e da Tabela de Ranking
+    Promise.all([fetchTabela1Data(), fetchRankingData()])
+        .then(([tabela1Data, rankingData]) => {
+            // 2. Encontrar o máximo da coluna 4 da Tabela 1
+            const maxRodada = Math.max(...tabela1Data.map(row => parseInt(row[3]) || 0));
+
+            // 3. Encontrar os Líderes que têm valor 1 na coluna 1 da Tabela de Ranking
+            const lideres = rankingData
+                .filter(row => row[0] === '1' && row[3] === maxRodada)
+                .map(row => row[1]); // Coluna 2
+
+            // 4. Atualizar os dados em dados.json
+            const updatedLideresData = {
+                rodada: maxRodada,
+                lideres: lideres
+            };
+
+            // Substituir o conteúdo do arquivo JSON (para simulação)
+            return fetch('dados.json', {
+                method: 'PUT', // Para simular a atualização do arquivo
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedLideresData)
+            });
+        })
+        .then(() => {
+            // Criar a tabela após a atualização
+            createLideresTable();
+        })
+        .catch(error => {
+            console.error('Erro ao atualizar dados dos Líderes ou criar tabela:', error);
+        });
+}
+
+// Função para buscar dados da Tabela 1
+function fetchTabela1Data() {
+    // Adapte esta função para buscar os dados necessários da Tabela 1
+    // Deve retornar uma promise com os dados
+}
+
+// Função para buscar dados da Tabela de Ranking
+function fetchRankingData() {
+    // Adapte esta função para buscar os dados necessários da Tabela de Ranking
+    // Deve retornar uma promise com os dados
+}
+
+// Chamar a função para atualizar dados e criar a tabela de líderes
+updateLideresDataAndCreateTable();
+
+	    
+	    
+	    
+	    
+	    // Função para carregar dados do arquivo dados.json
     function fetchLideresData() {
         return fetch('dados.json')
             .then(response => response.json())
